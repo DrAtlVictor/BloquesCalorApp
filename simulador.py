@@ -1,61 +1,55 @@
 
-import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-st.set_page_config(layout="wide")
-st.title("Simulador Gráfico — Método de Bloques de Calor con Sombreado")
+def cargar_corrientes(path):
+    df = pd.read_csv(path)
+    return df
 
-delta_Tmin = 20
-escala = 10000
+def graficar_bloques(df):
+    escala = 10000
+    fig, ax = plt.subplots(figsize=(12, 6))
+    x_cursor = 0
+    espacio = 0.5
 
-data = pd.DataFrame({
-    "Corriente": ["C1", "C2", "C3", "C4", "C5"],
-    "Tipo": ["Fría", "Caliente", "Fría", "Caliente", "Fría"],
-    "T_inicial": [100, 480, 150, 400, 200],
-    "T_objetivo": [400, 250, 360, 150, 400],
-    "WCp": [21600, 31500, 24500, 25200, 24700]
-})
+    for _, row in df.iterrows():
+        name = row["Corriente"]
+        tipo = row["Tipo"]
+        Tin = row["T_entrada"]
+        Tout = row["T_salida"]
+        WCp = row["WCp"]
 
-satisf = {
-    "C1": (100, 400),
-    "C2": (274.3, 250),
-    "C3": (150, 360),
-    "C4": (195.8, 150),
-    "C5": (200, 230.99)
-}
+        color = "blue" if tipo == "Fría" else "red"
+        ancho = WCp / escala
+        Ttop = max(Tin, Tout)
+        Tbot = min(Tin, Tout)
+        altura = Ttop - Tbot
 
-colores = {"Fría": "blue", "Caliente": "red"}
+        # Bloque principal sólido
+        ax.add_patch(patches.Rectangle((x_cursor, Tbot), ancho, altura,
+                                       facecolor=color, edgecolor='black', linewidth=1.5))
 
-fig, ax = plt.subplots(figsize=(10, 6))
-x = 0
-for _, row in data.iterrows():
-    nombre = row["Corriente"]
-    tipo = row["Tipo"]
-    Tin = row["T_inicial"]
-    Tout = row["T_objetivo"]
-    WCp = row["WCp"]
-    color = colores[tipo]
-    ancho = WCp / escala
-    Tmin, Tmax = sorted([Tin, Tout])
-    altura = Tmax - Tmin
-    ax.add_patch(patches.Rectangle((x, Tmin), ancho, altura, facecolor=color, edgecolor="black"))
-    if nombre in satisf:
-        T1, T2 = satisf[nombre]
-        T_somb_min, T_somb_max = sorted([T1, T2])
-        altura_somb = T_somb_max - T_somb_min
-        ax.add_patch(patches.Rectangle((x, T_somb_min), ancho, altura_somb,
-                      facecolor="none", hatch="///", edgecolor="black", linewidth=0.8))
+        # Etiqueta
+        txt_color = "white" if color == "blue" else "black"
+        ax.text(x_cursor + ancho/2, Tbot + altura/2, f"{name}\n{int(WCp)}",
+                ha='center', va='center', color=txt_color, fontsize=10, weight='bold')
 
-    ax.text(x + ancho/2, Tmin + altura/2, f"{nombre}\n{WCp}", ha="center", color='white' if color=="blue" else 'black', fontsize=8)
-    ax.text(x + ancho + 0.2, Tmin, f"{Tmin:.1f}°F", fontsize=8)
-    ax.text(x + ancho + 0.2, Tmax, f"{Tmax:.1f}°F", fontsize=8)
-    x += ancho + 1
+        # Temperaturas
+        ax.text(x_cursor + ancho + 0.1, Tin, f"{Tin:.1f}°F", fontsize=9)
+        ax.text(x_cursor + ancho + 0.1, Tout, f"{Tout:.1f}°F", fontsize=9)
 
-ax.set_ylim(0, 550)
-ax.set_xlim(0, x)
-ax.set_ylabel("Temperatura (°F)")
-ax.set_xlabel("Escala horizontal proporcional a WCp")
-ax.set_title("Vista de bloques con sombreado parcial")
-st.pyplot(fig)
+        x_cursor += ancho + espacio
+
+    ax.set_ylim(0, 500)
+    ax.set_xlim(0, x_cursor)
+    ax.set_ylabel("Temperatura (°F)")
+    ax.set_xlabel("Escala horizontal proporcional a WCp")
+    ax.set_title("Diagrama base de bloques térmicos")
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == "__main__":
+    archivo = "corrientes_problema_base.csv"
+    df_corrientes = cargar_corrientes(archivo)
+    graficar_bloques(df_corrientes)
