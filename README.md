@@ -1,2 +1,2 @@
 # BloquesCalorApp
-Versión con sombreado parcial visible.
+Simulador del método gráfico de bloques de calor.

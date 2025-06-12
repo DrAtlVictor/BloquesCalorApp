@@ -1,4 +1,4 @@
-Corriente,Tipo,T_entrada,T_salida,WCp
+Corriente,Tipo,T_entrada (°F),T_salida (°F),WCp (Btu/h°F)
 C1,Fría,100,400,21600
 C2,Caliente,480,250,31500
 C3,Fría,150,360,24500
