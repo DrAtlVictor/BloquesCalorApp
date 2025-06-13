@@ -1,16 +1,17 @@
 
 # BloquesCalorApp
 
-Simulador interactivo del **método gráfico de bloques de calor** para síntesis de redes de intercambio térmico (HEN).  
-Permite representar corrientes calientes y frías, aplicar intercambios paso a paso validando ΔTmin, y visualizar los bloques con sombreado parcial según los pasos aplicados.
+Simulador interactivo del **método gráfico de bloques de calor** para síntesis de redes de intercambio térmico.  
+Permite representar corrientes, aplicar intercambios paso a paso y visualizar bloques con sombreado parcial.
 
 ---
 
-## 📦 Archivos principales
+## 📁 Archivos
 
-- `simulador_bloques_lado_frio_corregido.py`: Aplicación principal desarrollada con Streamlit.
-- `corrientes_problema_base.csv`: Archivo con las corrientes de entrada (nombre, tipo, temperatura, WCp).
-- `requirements.txt`: Lista de dependencias necesarias.
+- `simulador.py`: aplicación principal con Streamlit.
+- `corrientes_problema_base.csv`: corrientes de entrada.
+- `requirements.txt`: dependencias necesarias.
+- `README.md`: esta descripción.
 
 ---
 
@@ -18,52 +19,40 @@ Permite representar corrientes calientes y frías, aplicar intercambios paso a p
 
 1. Instala las dependencias:
 
-```bash
+```
 pip install -r requirements.txt
 ```
 
-2. Ejecuta la aplicación en Streamlit:
+2. Ejecuta con:
 
-```bash
-streamlit run simulador_bloques_lado_frio_corregido.py
+```
+streamlit run simulador.py
 ```
 
-3. Sube el archivo `corrientes_problema_base.csv` desde la interfaz de la app.
+3. Sube el archivo `corrientes_problema_base.csv` desde la interfaz.
 
 ---
 
-## 📋 Formato del archivo CSV
+## 📋 Formato del CSV
 
-Debe contener los siguientes encabezados:
+Encabezados requeridos:
 
 ```
 Corriente,Tipo,T_entrada,T_salida,WCp
 ```
 
-Ejemplo de contenido:
+Ejemplo:
 
 ```
 C1,Fría,100,400,21600
 C2,Caliente,480,250,31500
-C3,Fría,150,360,24500
-C4,Caliente,400,150,25200
-C5,Fría,200,400,24700
+...
 ```
 
 ---
 
-## 🧠 Funcionalidades
+## 🧠 Funciones clave
 
-- Lectura dinámica de datos desde archivo `.csv`
-- Representación gráfica con bloques térmicos proporcionales a WCp y ΔT
-- Aplicación de intercambios paso a paso con:
-  - Validación de factibilidad por el lado caliente y el lado frío
-  - Sombreado parcial (///) de bloques ya satisfechos
-  - Flechas numeradas indicando el orden de intercambios
-
----
-
-## ✍️ Autor
-
-DrAtlVictor — basado en el método gráfico de contenido de calor (Smith, 2005).
-
+- Validación de ΔTmin por arriba y por abajo
+- Sombreado parcial cuando el intercambio es por el lado frío
+- Flechas numeradas en bloques satisfechos
