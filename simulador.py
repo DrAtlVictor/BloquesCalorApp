@@ -69,7 +69,7 @@ if archivo is not None:
             F["T_in"] += deltaT_F
         else:
             C["T_out"] -= deltaT_C
-            F["T_out"] += deltaT_F
+            F["T_in"] += deltaT_F
 
         if abs(C["T_in"] - C["T_out"]) < 1:
             C["satisfecho"] = True
