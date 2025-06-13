@@ -1,3 +1,3 @@
 # BloquesCalorApp
 
-Simulador interactivo del método gráfico de bloques de calor.
+Simulador funcional con lógica de intercambio térmico.

@@ -32,6 +32,7 @@ if archivo is not None:
     estado = st.session_state.estado
     colores = {"Fría": "blue", "Caliente": "red"}
 
+    # Selección de corrientes
     cols = st.columns(2)
     calientes = [k for k, v in estado.items() if v["tipo"] == "Caliente" and not v["satisfecho"]]
     frias = [k for k, v in estado.items() if v["tipo"] == "Fría" and not v["satisfecho"]]
@@ -42,34 +43,25 @@ if archivo is not None:
     def aplicar_intercambio(c, f):
         C = estado[c]
         F = estado[f]
-        criterio1 = C["T_in"] > F["T_out"] + delta_Tmin
-        criterio2 = C["T_out"] > F["T_in"] + delta_Tmin
-        if not criterio1 and not criterio2:
-            st.warning("No se cumple ∆Tmin por ningún lado.")
-            return
-        usar_cara_superior = criterio1
+        Tcc = C["T_in"]
+        Tff = F["T_out"]
 
-        if usar_cara_superior:
-            delta_Tf = F["T_out"] - F["T_in"]
-            Qf = F["WCp"] * delta_Tf
-            delta_Tc = C["T_in"] - C["T_out"]
-            Qc = C["WCp"] * delta_Tc
-        else:
-            delta_Tf = F["T_out"] - F["T_in"]
-            Qf = F["WCp"] * delta_Tf
-            delta_Tc = C["T_out"] - C["T_in"]
-            Qc = C["WCp"] * delta_Tc
+        if Tcc <= Tff + delta_Tmin:
+            st.warning("No se cumple ∆Tmin para contracorriente.")
+            return
+
+        delta_Tf = F["T_out"] - F["T_in"]
+        Qf = F["WCp"] * delta_Tf
+
+        delta_Tc = C["T_in"] - C["T_out"]
+        Qc = C["WCp"] * delta_Tc
 
         Q_real = min(Qf, Qc)
         deltaT_C = Q_real / C["WCp"]
         deltaT_F = Q_real / F["WCp"]
 
-        if usar_cara_superior:
-            C["T_in"] -= deltaT_C
-            F["T_in"] += deltaT_F
-        else:
-            C["T_out"] -= deltaT_C
-            F["T_out"] += deltaT_F
+        C["T_in"] -= deltaT_C
+        F["T_in"] += deltaT_F
 
         if abs(C["T_in"] - C["T_out"]) < 1:
             C["satisfecho"] = True
@@ -83,6 +75,7 @@ if archivo is not None:
         if caliente and fria:
             aplicar_intercambio(c=caliente, f=fria)
 
+    # Mostrar gráfica
     fig, ax = plt.subplots(figsize=(10, 6))
     x = 0
     for nombre, valores in estado.items():
@@ -106,6 +99,7 @@ if archivo is not None:
     ax.set_title("Bloques de Calor")
     st.pyplot(fig)
 
+    # Mostrar historial
     if st.session_state.historial:
         st.subheader("Historial de intercambios")
         df_hist = pd.DataFrame(st.session_state.historial, columns=["Paso", "Caliente", "Fría", "Q (Btu/h)"])
