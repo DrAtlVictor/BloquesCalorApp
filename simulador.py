@@ -82,7 +82,7 @@ if archivo is not None:
 
     if st.button("Aplicar intercambio"):
         if caliente and fria:
-            aplicar_intercambio(c=caliente, f=fria)
+            aplicar_intercambio(C=caliente, F=fria)
 
     fig, ax = plt.subplots(figsize=(10, 6))
     x = 0
