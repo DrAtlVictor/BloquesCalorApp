@@ -60,9 +60,9 @@ if archivo is not None:
             delta_Tc = C["T_out"] - C["T_in"]
             Qc = C["WCp"] * delta_Tc
 
-        Q_real = min(Qf, Qc)
-        deltaT_C = Q_real / C["WCp"]
-        deltaT_F = Q_real / F["WCp"]
+            Q_real = min(Qf, Qc)
+            deltaT_C = Q_real / C["WCp"]
+            deltaT_F = Q_real / F["WCp"]
             C["T_out"] -= deltaT_C
             F["T_in"] += deltaT_F
         if usar_cara_superior:
